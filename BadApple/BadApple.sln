@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2026
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BadApple", "BadApple.csproj", "{DAB86E01-85CF-4619-8955-790CB463AD96}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DAB86E01-85CF-4619-8955-790CB463AD96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAB86E01-85CF-4619-8955-790CB463AD96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAB86E01-85CF-4619-8955-790CB463AD96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAB86E01-85CF-4619-8955-790CB463AD96}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {463C6247-6B5C-4F71-9B15-B3E84F597273}
+	EndGlobalSection
+EndGlobal
