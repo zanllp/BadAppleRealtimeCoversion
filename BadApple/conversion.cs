@@ -14,7 +14,8 @@ namespace BadApple
         public int calc_range_x;//源图片每个区域的计算范围
         public int calc_range_y;
         public int thresold_var = 170;//判断的阈值
-                                      //源图片，目标图片
+        public List<byte> data = new List<byte>();//转换后的数据
+        //源图片，目标图片
         public PicCompress(Mat src, Mat dst)
         {
             Src = src;
@@ -68,6 +69,29 @@ namespace BadApple
             }
             return Dst;
 
+        }
+        //获取转换后的点阵数据
+        public List<byte> GetLcdData()
+        {
+            data.Clear();
+            GetMat();
+            for (int i = 0; i < Dst.Rows; i += 8)
+            {
+                for (int j = 0; j < Dst.Cols; j++)
+                {
+                    byte temp = 0;
+                    for (int K = 0; K < 8; K++)//8BIT
+                    {
+                        byte value = Dst.Get<byte>(j + K, i);
+                        if (value == 255)
+                        {
+                            temp |= (byte)(1 << K);
+                        }
+                    }
+                    data.Add(temp);
+                }
+            }
+            return data;
         }
     }
 }

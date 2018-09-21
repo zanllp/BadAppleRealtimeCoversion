@@ -10,7 +10,7 @@ using System.IO;
 using OpenCvSharp;
 using BadApple;
 //using OpenCvSharp.Extensions;
-//using System.Collections.Generic;
+using System.Collections.Generic;
 //using Newtonsoft.Json;
 namespace 上位机
 {
@@ -1178,15 +1178,29 @@ namespace 上位机
             //row->行->y,col->列->x 
             Mat dst = new Mat(48, 84, MatType.CV_8UC1);
             PicCompress pic = new PicCompress(src, dst);
-            
+            for (int i = 0; i < 1000; i++)
+            {
+                bad_apple.Read(src0);
+            }
             while (true)
             {
                 bad_apple.Read(src0);
-                Cv2.ImShow("dst", pic.GetMat());
-                Cv2.ImShow("src", src);
+                if (src0.Empty())
+                {
+                    break;
+                }
+                //Cv2.ImShow("dst", pic.GetMat());
+                //Cv2.ImShow("src", src);
                 Cv2.WaitKey(sleepTime);
+                break;
             }
-
+            foreach (var item in pic.GetLcdData())
+            {
+                LM_print(item.ToString());
+            }
+            UM_print(pic.data.Count.ToString());
+            
+            
         }
     }
 }
