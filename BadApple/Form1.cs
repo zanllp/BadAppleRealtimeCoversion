@@ -679,94 +679,96 @@ namespace 上位机
         public int data_shaft_point = 2;//数据轴保留到小数点后0位
         private void pictureBox1_Paint(object sender, PaintEventArgs e)
         {
-            if (draw_open)
+            if (!draw_open)
             {
-                Graphics g = e.Graphics; //创建画板,这里的画板是由Form提供的.
-                g.SmoothingMode = SmoothingMode.AntiAlias;//抗锯齿
-
-                Pen p = new Pen(Color.FromArgb(0XFF, 0X66, 0XCC, 0XFF), line_width);//自定义了一个天依蓝,宽度为的画笔
-                Pen p_1 = new Pen(Color.Black, 2);
-                Pen p_2 = new Pen(Color.Brown, 1);
-                Pen p_3 = new Pen(Color.Aqua, 3);
-                Pen p_4 = new Pen(Color.Black, 1);
-                SolidBrush solid = new SolidBrush(Color.DarkBlue);
-                SolidBrush solid_1 = new SolidBrush(Color.Black);
-                Pen[] pens = new Pen[] { new Pen(Color.Green, line_width), new Pen(Color.Black, line_width), new Pen(Color.Red, line_width), new Pen(Color.Blue, line_width), new Pen(Color.Cyan, line_width) };
-
-                int drawingxox_w = pictureBox1.Width - 82;
-                int drawingxox_h = pictureBox1.Height - 52;
-                /*********************************坐标系网格线与刻度***********************************/
-                for (int i = 0; i < 9; i++)//边框
-                {
-                    g.DrawLine(p_2, (drawingxox_w / 10) * (i + 1), 0, (drawingxox_w / 10) * (i + 1), drawingxox_h);
-                    g.DrawLine(p_2, 0, (drawingxox_h / 10) * (i + 1), drawingxox_w, (drawingxox_h / 10) * (i + 1));
-                    g.DrawString(((double)(drawingxox_w * (1 + i) * 0.1 + cross_border) * x_speed / 1000).ToString(decimal_point[time_shaft_point]), DefaultFont, solid, (drawingxox_w / 10) * (i + 1), drawingxox_h + 5); //时间轴
-                    g.DrawString((var_min + (var_max - var_min) * (double)(10 - (i + 1)) * 0.1).ToString(decimal_point[data_shaft_point]), DefaultFont, solid, drawingxox_w + 3, (drawingxox_h / 10) * (i + 1));//数据轴
-
-                }
-
-                g.DrawRectangle(p_1, 0, 0, drawingxox_w, drawingxox_h);
-                g.DrawString((var_max * 1.00).ToString(decimal_point[data_shaft_point]), DefaultFont, solid, drawingxox_w + 3, 0);//数据轴第一位
-                g.DrawString((var_min * 1.00).ToString(decimal_point[data_shaft_point]), DefaultFont, solid, drawingxox_w + 3, drawingxox_h - 10);//数据轴最后一位
-                g.DrawString(((double)(drawingxox_w + cross_border) * x_speed * 0.001).ToString(decimal_point[time_shaft_point]), DefaultFont, solid, drawingxox_w - 5, drawingxox_h + 5);//时间轴最后位
-                g.DrawString(((double)((0 + cross_border) * x_speed * 0.001)).ToString(decimal_point[time_shaft_point]), DefaultFont, solid, 0, drawingxox_h + 5);//时间轴第一位，tostring("0.##")保留2位小数点
-
-
-                /*****************************坐标转换与数据显示*******************************/
-                for (int i = 0; i < line_var; i++)
-                {
-                    int h_middle = drawingxox_h / 2;
-                    if ((coor[0, coor_var - 1, 0] / x_speed) >= drawingxox_w)//判断x轴是否越界，若是进行转换
-                    {
-                        cross_border = (int)(coor[0, coor_var - 1, 0] / x_speed) - drawingxox_w;
-                        for (int i_0 = 0; i_0 < coor_var; i_0++)
-                        {
-
-                            coor_tsf[i, i_0, 0] = ((coor[0, i_0, 0] / x_speed) - cross_border);
-                            coor_tsf[i, i_0, 1] = (int)((coor[i, i_0, 1] - var_min) / (double)(var_max - var_min) * drawingxox_h);
-                            coor_tsf[i, i_0, 1] = h_middle - (coor_tsf[i, i_0, 1] - h_middle);
-
-                        }
-                    }
-                    else
-                    {
-                        for (int i_0 = 0; i_0 < coor_var; i_0++)
-                        {
-                            coor_tsf[i, i_0, 0] = (coor[0, i_0, 0] / x_speed);
-                            coor_tsf[i, i_0, 1] = (int)((coor[i, i_0, 1] - var_min) / (double)(var_max - var_min) * drawingxox_h);
-                            coor_tsf[i, i_0, 1] = h_middle - (coor_tsf[i, i_0, 1] - h_middle);
-
-                        }
-
-                    }
-
-                    for (int i_0 = 0; i_0 < coor_var - 1; i_0++)//画折线
-                    {
-
-                        g.DrawLine(pens[i], (int)coor_tsf[i, i_0, 0], (int)coor_tsf[i, i_0, 1], (int)coor_tsf[i, i_0 + 1, 0], (int)coor_tsf[i, i_0 + 1, 1]);
-
-                    }
-                    if (vernier && coor[i, coor_var - 1, 1] != 0)//if (vernier&&x_speed_i>coor_var)
-                    {
-                        g.DrawLine(pens[i], (int)coor_tsf[i, coor_var - 1, 0], (int)coor_tsf[i, coor_var - 1, 1], drawingxox_w + 60, (int)coor_tsf[i, coor_var - 1, 1]);//游动标尺
-                        g.DrawString("L" + i + ":" + (coor[i, coor_var - 1, 1].ToString(decimal_point[data_shaft_point])), DefaultFont, solid_1, drawingxox_w + 30, (int)coor_tsf[i, coor_var - 1, 1] - 15);//标尺上的数字
-                    }
-
-
-                }
-
-                /************************************光标标尺*****************************************/
-                if (cursor_ruler)
-                {
-                    System.Drawing.Point point = pictureBox1.PointToClient(Control.MousePosition);//获取相对控件的坐标
-                    g.DrawLine(p_4, point.X, 0, point.X, drawingxox_h + 40);
-                    g.DrawString(((double)(point.X + cross_border) * x_speed / 1000).ToString(decimal_point[time_shaft_point]), DefaultFont, solid_1, point.X + 3, drawingxox_h + 30);
-                    g.DrawLine(p_4, 0, point.Y, drawingxox_w + 60, point.Y);
-                    g.DrawString((((1 - ((double)point.Y / drawingxox_h)) * (var_max - var_min)) + var_min).ToString(decimal_point[data_shaft_point]), DefaultFont, solid_1, drawingxox_w + 40, point.Y + 3);
-
-                }
+                return;
             }
-          
+            Graphics g = e.Graphics; //创建画板,这里的画板是由Form提供的.
+            g.SmoothingMode = SmoothingMode.AntiAlias;//抗锯齿
+
+            Pen p = new Pen(Color.FromArgb(0XFF, 0X66, 0XCC, 0XFF), line_width);//自定义了一个天依蓝,宽度为的画笔
+            Pen p_1 = new Pen(Color.Black, 2);
+            Pen p_2 = new Pen(Color.Brown, 1);
+            Pen p_3 = new Pen(Color.Aqua, 3);
+            Pen p_4 = new Pen(Color.Black, 1);
+            SolidBrush solid = new SolidBrush(Color.DarkBlue);
+            SolidBrush solid_1 = new SolidBrush(Color.Black);
+            Pen[] pens = new Pen[] { new Pen(Color.Green, line_width), new Pen(Color.Black, line_width), new Pen(Color.Red, line_width), new Pen(Color.Blue, line_width), new Pen(Color.Cyan, line_width) };
+
+            int drawingxox_w = pictureBox1.Width - 82;
+            int drawingxox_h = pictureBox1.Height - 52;
+            /*********************************坐标系网格线与刻度***********************************/
+            for (int i = 0; i < 9; i++)//边框
+            {
+                g.DrawLine(p_2, (drawingxox_w / 10) * (i + 1), 0, (drawingxox_w / 10) * (i + 1), drawingxox_h);
+                g.DrawLine(p_2, 0, (drawingxox_h / 10) * (i + 1), drawingxox_w, (drawingxox_h / 10) * (i + 1));
+                g.DrawString(((double)(drawingxox_w * (1 + i) * 0.1 + cross_border) * x_speed / 1000).ToString(decimal_point[time_shaft_point]), DefaultFont, solid, (drawingxox_w / 10) * (i + 1), drawingxox_h + 5); //时间轴
+                g.DrawString((var_min + (var_max - var_min) * (double)(10 - (i + 1)) * 0.1).ToString(decimal_point[data_shaft_point]), DefaultFont, solid, drawingxox_w + 3, (drawingxox_h / 10) * (i + 1));//数据轴
+
+            }
+
+            g.DrawRectangle(p_1, 0, 0, drawingxox_w, drawingxox_h);
+            g.DrawString((var_max * 1.00).ToString(decimal_point[data_shaft_point]), DefaultFont, solid, drawingxox_w + 3, 0);//数据轴第一位
+            g.DrawString((var_min * 1.00).ToString(decimal_point[data_shaft_point]), DefaultFont, solid, drawingxox_w + 3, drawingxox_h - 10);//数据轴最后一位
+            g.DrawString(((double)(drawingxox_w + cross_border) * x_speed * 0.001).ToString(decimal_point[time_shaft_point]), DefaultFont, solid, drawingxox_w - 5, drawingxox_h + 5);//时间轴最后位
+            g.DrawString(((double)((0 + cross_border) * x_speed * 0.001)).ToString(decimal_point[time_shaft_point]), DefaultFont, solid, 0, drawingxox_h + 5);//时间轴第一位，tostring("0.##")保留2位小数点
+
+
+            /*****************************坐标转换与数据显示*******************************/
+            for (int i = 0; i < line_var; i++)
+            {
+                int h_middle = drawingxox_h / 2;
+                if ((coor[0, coor_var - 1, 0] / x_speed) >= drawingxox_w)//判断x轴是否越界，若是进行转换
+                {
+                    cross_border = (int)(coor[0, coor_var - 1, 0] / x_speed) - drawingxox_w;
+                    for (int i_0 = 0; i_0 < coor_var; i_0++)
+                    {
+
+                        coor_tsf[i, i_0, 0] = ((coor[0, i_0, 0] / x_speed) - cross_border);
+                        coor_tsf[i, i_0, 1] = (int)((coor[i, i_0, 1] - var_min) / (double)(var_max - var_min) * drawingxox_h);
+                        coor_tsf[i, i_0, 1] = h_middle - (coor_tsf[i, i_0, 1] - h_middle);
+
+                    }
+                }
+                else
+                {
+                    for (int i_0 = 0; i_0 < coor_var; i_0++)
+                    {
+                        coor_tsf[i, i_0, 0] = (coor[0, i_0, 0] / x_speed);
+                        coor_tsf[i, i_0, 1] = (int)((coor[i, i_0, 1] - var_min) / (double)(var_max - var_min) * drawingxox_h);
+                        coor_tsf[i, i_0, 1] = h_middle - (coor_tsf[i, i_0, 1] - h_middle);
+
+                    }
+
+                }
+
+                for (int i_0 = 0; i_0 < coor_var - 1; i_0++)//画折线
+                {
+
+                    g.DrawLine(pens[i], (int)coor_tsf[i, i_0, 0], (int)coor_tsf[i, i_0, 1], (int)coor_tsf[i, i_0 + 1, 0], (int)coor_tsf[i, i_0 + 1, 1]);
+
+                }
+                if (vernier && coor[i, coor_var - 1, 1] != 0)//if (vernier&&x_speed_i>coor_var)
+                {
+                    g.DrawLine(pens[i], (int)coor_tsf[i, coor_var - 1, 0], (int)coor_tsf[i, coor_var - 1, 1], drawingxox_w + 60, (int)coor_tsf[i, coor_var - 1, 1]);//游动标尺
+                    g.DrawString("L" + i + ":" + (coor[i, coor_var - 1, 1].ToString(decimal_point[data_shaft_point])), DefaultFont, solid_1, drawingxox_w + 30, (int)coor_tsf[i, coor_var - 1, 1] - 15);//标尺上的数字
+                }
+
+
+            }
+
+            /************************************光标标尺*****************************************/
+            if (cursor_ruler)
+            {
+                System.Drawing.Point point = pictureBox1.PointToClient(Control.MousePosition);//获取相对控件的坐标
+                g.DrawLine(p_4, point.X, 0, point.X, drawingxox_h + 40);
+                g.DrawString(((double)(point.X + cross_border) * x_speed / 1000).ToString(decimal_point[time_shaft_point]), DefaultFont, solid_1, point.X + 3, drawingxox_h + 30);
+                g.DrawLine(p_4, 0, point.Y, drawingxox_w + 60, point.Y);
+                g.DrawString((((1 - ((double)point.Y / drawingxox_h)) * (var_max - var_min)) + var_min).ToString(decimal_point[data_shaft_point]), DefaultFont, solid_1, drawingxox_w + 40, point.Y + 3);
+
+            }
+        
+
         }
         /*********************************************************************************************************/
 
@@ -778,70 +780,71 @@ namespace 上位机
         public int point_size = 5;
         private void pictureBox2_Paint(object sender, PaintEventArgs e)
         {
-            if (draw_open)
+            if (!draw_open)
             {
-                Graphics g = e.Graphics; //创建画板,这里的画板是由Form提供的.
-                g.SmoothingMode = SmoothingMode.AntiAlias;//抗锯齿
-                                                          //  Mat sion = new Mat(@"sion.png", ImreadModes.AnyColor);
-                                                          // Cv2.ImShow("sion", sion);
-
-
-                Pen p = new Pen(Color.FromArgb(0XFF, 0X66, 0XCC, 0XFF), line_width);//自定义了一个天依蓝,宽度为的画笔
-                Pen p_1 = new Pen(Color.Black, 2);
-                Pen p_2 = new Pen(Color.Brown, 1);
-                Pen p_3 = new Pen(Color.Aqua, 3);
-                Pen p_4 = new Pen(Color.Black, 1);
-                SolidBrush solid = new SolidBrush(Color.DarkBlue);
-                SolidBrush solid_1 = new SolidBrush(Color.Black);
-                Pen[] pens = new Pen[] { new Pen(Color.Green, line_width), p, new Pen(Color.Blue, line_width), new Pen(Color.Red, line_width), new Pen(Color.Brown, line_width) };
-                SolidBrush[] solids = new SolidBrush[] { new SolidBrush(Color.Green), new SolidBrush(Color.Black), new SolidBrush(Color.Red), new SolidBrush(Color.Blue), new SolidBrush(Color.Cyan) };
-                int drawingxox_w = pictureBox1.Width - 82;
-                int drawingxox_h = pictureBox1.Height - 52;
-                /*********************************坐标系网格线与刻度***********************************/
-                for (int i = 0; i < 9; i++)//边框
-                {
-                    g.DrawLine(p_2, (drawingxox_w / 10) * (i + 1), 0, (drawingxox_w / 10) * (i + 1), drawingxox_h);
-                    g.DrawLine(p_2, 0, (drawingxox_h / 10) * (i + 1), drawingxox_w, (drawingxox_h / 10) * (i + 1));
-                    g.DrawString((var_min_sdx + (var_max_sdx - var_min_sdx) * (1 + i) * 0.1).ToString(decimal_point[time_shaft_point]), DefaultFont, solid, (drawingxox_w / 10) * (i + 1), drawingxox_h + 5); //时间轴
-                    g.DrawString((var_min_sdy + (var_max_sdy - var_min_sdy) * (double)(10 - (i + 1)) * 0.1).ToString(decimal_point[data_shaft_point]), DefaultFont, solid, drawingxox_w + 3, (drawingxox_h / 10) * (i + 1));//数据轴
-                }
-
-                g.DrawRectangle(p_1, 0, 0, drawingxox_w, drawingxox_h);
-                g.DrawString((var_max_sdy * 1.00).ToString(decimal_point[data_shaft_point]), DefaultFont, solid, drawingxox_w + 3, 0);//数据轴第一位
-                g.DrawString((var_min_sdy * 1.00).ToString(decimal_point[data_shaft_point]), DefaultFont, solid, drawingxox_w + 3, drawingxox_h - 10);//数据轴最后一位
-                g.DrawString((var_max_sdx * 1.00).ToString(decimal_point[time_shaft_point]), DefaultFont, solid, drawingxox_w - 5, drawingxox_h + 5);//时间轴最后位
-                g.DrawString((var_min_sdx * 1.00).ToString(decimal_point[time_shaft_point]), DefaultFont, solid, 0, drawingxox_h + 5);//时间轴第一位，tostring("0.##")保留2位小数点
-                                                                                                                                      /***********************************坐标转换及打印*************************************/
-                for (int i = 0; i < sd_var; i++)
-                {
-                    for (int i_0 = 0; i_0 < coor_var_sd; i_0++)
-                    {
-                        coor_tsf_sd[i, i_0, 0] = (coor_sd[i, i_0, 0] - var_min_sdx) / (var_max_sdx - var_min_sdx) * drawingxox_w;
-                        coor_tsf_sd[i, i_0, 1] = (coor_sd[i, i_0, 1] - var_min_sdy) / (var_max_sdy - var_min_sdy) * drawingxox_h;
-                    }
-                    for (int i_0 = 0; i_0 < coor_var_sd; i_0++)
-                    {
-                        Rectangle rect = new Rectangle((int)coor_tsf_sd[i, i_0, 0] - point_size / 2, (int)coor_tsf_sd[i, i_0, 1] - point_size / 2, point_size, point_size);//定义矩形,参数为起点横纵坐标以及其长和宽
-                        g.FillPie(solids[i], rect, 0, 360);
-
-                    }
-                    g.DrawString(("P" + i + ":").ToString(), DefaultFont, solids[i], drawingxox_w + 40, drawingxox_h / 10 * i);//标尺上的数字
-                    Rectangle rect0 = new Rectangle(drawingxox_w + 60, drawingxox_h / 10 * i + 2, point_size, point_size);//定义矩形,参数为起点横纵坐标以及其长和宽
-                    g.FillPie(solids[i], rect0, 0, 360);
-                }
-
-                /************************************光标标尺*****************************************/
-
-                {
-                    System.Drawing.Point point = pictureBox2.PointToClient(Control.MousePosition);//获取相对控件的坐标
-                    g.DrawLine(p_4, point.X, 0, point.X, drawingxox_h + 40);
-                    g.DrawString(((((double)point.X / drawingxox_w) * (var_max_sdx - var_min_sdx)) + var_min_sdx).ToString(decimal_point[time_shaft_point]), DefaultFont, solid_1, point.X + 3, drawingxox_h + 30);
-                    g.DrawLine(p_4, 0, point.Y, drawingxox_w + 60, point.Y);
-                    g.DrawString((((1 - ((double)point.Y / drawingxox_h)) * (var_max_sdy - var_min_sdy)) + var_min_sdy).ToString(decimal_point[data_shaft_point]), DefaultFont, solid_1, drawingxox_w + 40, point.Y + 3);
-
-                }
+                return;
             }
-           
+            Graphics g = e.Graphics; //创建画板,这里的画板是由Form提供的.
+            g.SmoothingMode = SmoothingMode.AntiAlias;//抗锯齿
+                                                      //  Mat sion = new Mat(@"sion.png", ImreadModes.AnyColor);
+                                                      // Cv2.ImShow("sion", sion);
+
+
+            Pen p = new Pen(Color.FromArgb(0XFF, 0X66, 0XCC, 0XFF), line_width);//自定义了一个天依蓝,宽度为的画笔
+            Pen p_1 = new Pen(Color.Black, 2);
+            Pen p_2 = new Pen(Color.Brown, 1);
+            Pen p_3 = new Pen(Color.Aqua, 3);
+            Pen p_4 = new Pen(Color.Black, 1);
+            SolidBrush solid = new SolidBrush(Color.DarkBlue);
+            SolidBrush solid_1 = new SolidBrush(Color.Black);
+            Pen[] pens = new Pen[] { new Pen(Color.Green, line_width), p, new Pen(Color.Blue, line_width), new Pen(Color.Red, line_width), new Pen(Color.Brown, line_width) };
+            SolidBrush[] solids = new SolidBrush[] { new SolidBrush(Color.Green), new SolidBrush(Color.Black), new SolidBrush(Color.Red), new SolidBrush(Color.Blue), new SolidBrush(Color.Cyan) };
+            int drawingxox_w = pictureBox1.Width - 82;
+            int drawingxox_h = pictureBox1.Height - 52;
+            /*********************************坐标系网格线与刻度***********************************/
+            for (int i = 0; i < 9; i++)//边框
+            {
+                g.DrawLine(p_2, (drawingxox_w / 10) * (i + 1), 0, (drawingxox_w / 10) * (i + 1), drawingxox_h);
+                g.DrawLine(p_2, 0, (drawingxox_h / 10) * (i + 1), drawingxox_w, (drawingxox_h / 10) * (i + 1));
+                g.DrawString((var_min_sdx + (var_max_sdx - var_min_sdx) * (1 + i) * 0.1).ToString(decimal_point[time_shaft_point]), DefaultFont, solid, (drawingxox_w / 10) * (i + 1), drawingxox_h + 5); //时间轴
+                g.DrawString((var_min_sdy + (var_max_sdy - var_min_sdy) * (double)(10 - (i + 1)) * 0.1).ToString(decimal_point[data_shaft_point]), DefaultFont, solid, drawingxox_w + 3, (drawingxox_h / 10) * (i + 1));//数据轴
+            }
+
+            g.DrawRectangle(p_1, 0, 0, drawingxox_w, drawingxox_h);
+            g.DrawString((var_max_sdy * 1.00).ToString(decimal_point[data_shaft_point]), DefaultFont, solid, drawingxox_w + 3, 0);//数据轴第一位
+            g.DrawString((var_min_sdy * 1.00).ToString(decimal_point[data_shaft_point]), DefaultFont, solid, drawingxox_w + 3, drawingxox_h - 10);//数据轴最后一位
+            g.DrawString((var_max_sdx * 1.00).ToString(decimal_point[time_shaft_point]), DefaultFont, solid, drawingxox_w - 5, drawingxox_h + 5);//时间轴最后位
+            g.DrawString((var_min_sdx * 1.00).ToString(decimal_point[time_shaft_point]), DefaultFont, solid, 0, drawingxox_h + 5);//时间轴第一位，tostring("0.##")保留2位小数点
+                                                                                                                                  /***********************************坐标转换及打印*************************************/
+            for (int i = 0; i < sd_var; i++)
+            {
+                for (int i_0 = 0; i_0 < coor_var_sd; i_0++)
+                {
+                    coor_tsf_sd[i, i_0, 0] = (coor_sd[i, i_0, 0] - var_min_sdx) / (var_max_sdx - var_min_sdx) * drawingxox_w;
+                    coor_tsf_sd[i, i_0, 1] = (coor_sd[i, i_0, 1] - var_min_sdy) / (var_max_sdy - var_min_sdy) * drawingxox_h;
+                }
+                for (int i_0 = 0; i_0 < coor_var_sd; i_0++)
+                {
+                    Rectangle rect = new Rectangle((int)coor_tsf_sd[i, i_0, 0] - point_size / 2, (int)coor_tsf_sd[i, i_0, 1] - point_size / 2, point_size, point_size);//定义矩形,参数为起点横纵坐标以及其长和宽
+                    g.FillPie(solids[i], rect, 0, 360);
+
+                }
+                g.DrawString(("P" + i + ":").ToString(), DefaultFont, solids[i], drawingxox_w + 40, drawingxox_h / 10 * i);//标尺上的数字
+                Rectangle rect0 = new Rectangle(drawingxox_w + 60, drawingxox_h / 10 * i + 2, point_size, point_size);//定义矩形,参数为起点横纵坐标以及其长和宽
+                g.FillPie(solids[i], rect0, 0, 360);
+            }
+
+            /************************************光标标尺*****************************************/
+
+            {
+                System.Drawing.Point point = pictureBox2.PointToClient(Control.MousePosition);//获取相对控件的坐标
+                g.DrawLine(p_4, point.X, 0, point.X, drawingxox_h + 40);
+                g.DrawString(((((double)point.X / drawingxox_w) * (var_max_sdx - var_min_sdx)) + var_min_sdx).ToString(decimal_point[time_shaft_point]), DefaultFont, solid_1, point.X + 3, drawingxox_h + 30);
+                g.DrawLine(p_4, 0, point.Y, drawingxox_w + 60, point.Y);
+                g.DrawString((((1 - ((double)point.Y / drawingxox_h)) * (var_max_sdy - var_min_sdy)) + var_min_sdy).ToString(decimal_point[data_shaft_point]), DefaultFont, solid_1, drawingxox_w + 40, point.Y + 3);
+
+            }
+
         }
 
 
@@ -1158,12 +1161,12 @@ namespace 上位机
                 loop_print.Checked = false;
             }
         }
-
+        
         private void button5_Click_1(object sender, EventArgs e)
         {
             VideoCapture bad_apple = new VideoCapture(@"D:/Bad Apple.mp4");
-            int sleepTime = (int)Math.Round(1000 / bad_apple.Fps);
             Mat src0 = new Mat();
+            //row->行->y,col->列->x 
             //前几帧是空的，要弄掉，不然抛异常
             while (true)
             {
@@ -1173,12 +1176,11 @@ namespace 上位机
                     break;
                 }
             }
-            //两个视频的比例不对，不能直接进行转换，取合适的比例，否则画面会变形
             Mat src = new Mat(src0, new Rect(0, 100, src0.Cols, src0.Cols / 84 * 48));
-            //row->行->y,col->列->x 
             Mat dst = new Mat(48, 84, MatType.CV_8UC1);
             PicCompress pic = new PicCompress(src, dst);
-            for (int i = 0; i < 1000; i++)
+            //两个视频的比例不对，不能直接进行转换，取合适的比例，否则画面会变形
+            for (int i = 0; i < 0; i++)
             {
                 bad_apple.Read(src0);
             }
@@ -1189,19 +1191,35 @@ namespace 上位机
                 {
                     break;
                 }
-                //Cv2.ImShow("dst", pic.GetMat());
-                //Cv2.ImShow("src", src);
-                Cv2.WaitKey(sleepTime);
+                Cv2.ImShow("dst", pic.GetMat());
+                Cv2.ImShow("src", src);
+                //string temp = "";
+                byte[] vs = new byte[40];
+                List<byte> A = pic.GetLcdData();
+                for (int i = 0; i < 40; i++)
+                {
+                    vs[i] = A[i];
+                }
+                serialPort1.Write(vs, 0, 40);
+               /* foreach (var item in pic.GetLcdData())
+                {
+                    vs += item;
+                    //temp += item.ToString("X");
+                    if (temp.Length>=40)
+                    {
+                       
+                        UM_print(temp);
+                        serialPort1.Write(temp);
+                        break;
+                        temp = "";
+                    }
+                }*/
                 break;
+                Cv2.WaitKey(33);
             }
-            foreach (var item in pic.GetLcdData())
-            {
-                LM_print(item.ToString());
-            }
-            UM_print(pic.data.Count.ToString());
-            
             
         }
+       
     }
 }
 

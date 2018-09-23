@@ -10,7 +10,7 @@ namespace BadApple
     {
         public Mat Src { set; get; }
         public Mat Dst { set; get; }
-        public int leap_num = 4;//步进，加大可以减少计算量，但降低准确度
+        public int leap_num = 8;//步进，加大可以减少计算量，但降低准确度
         public int calc_range_x;//源图片每个区域的计算范围
         public int calc_range_y;
         public int thresold_var = 170;//判断的阈值
@@ -74,7 +74,7 @@ namespace BadApple
         public List<byte> GetLcdData()
         {
             data.Clear();
-            GetMat();
+            //GetMat();
             for (int i = 0; i < Dst.Rows; i += 8)
             {
                 for (int j = 0; j < Dst.Cols; j++)
