@@ -17,24 +17,24 @@ namespace 上位机
 
     public partial class Form1 : Form
     {
-       // private delegate void FlushClient();//代理
-    
+        // private delegate void FlushClient();//代理
+
         public Form1()
         {
             InitializeComponent();
-           
+
         }
         private void button1_Click(object sender, EventArgs e)
         {
             richTextBox_1.Text = "";
         }
 
-       
+
         HSSFWorkbook workbook2003 = new HSSFWorkbook(); //新建工作簿 
         private void Form1_Load(object sender, EventArgs e)
         {
-            
-            
+
+
             //pB5.Image
             btn5.Visible = false;
             btn_excel.Visible = false;
@@ -52,17 +52,17 @@ namespace 上位机
 
             workbook2003.CreateSheet("散点图");
             workbook2003.CreateSheet("数据可视化"); //新建1个Sheet工作表 
-             //**********************多线程***************************/
+                                               //**********************多线程***************************/
             CheckForIllegalCrossThreadCalls = false;//注意勿动
-            /*Thread thread = new Thread(new ThreadStart(Method1));
-            thread.IsBackground = true;
-            thread.Start();
-            /*******************************************************/
-            
+                                                    /*Thread thread = new Thread(new ThreadStart(Method1));
+                                                    thread.IsBackground = true;
+                                                    thread.Start();
+                                                    /*******************************************************/
+
         }
 
 
-     
+
         private void 退出ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Close();//关闭
@@ -91,7 +91,7 @@ namespace 上位机
 
 
 
-      
+
         ///******************************波特率单选*******************************/
         private void select_0(object sender)
         {
@@ -290,12 +290,12 @@ namespace 上位机
         //***********************************格式化输出***************************************************/
         private void UM_print(string a)//upper monitor 上位机
         {
-           
+
             richTextBox_1.AppendText("[" + DateTime.Now.ToString("t") + "]" + "上位机: " + a + '\n');
         }
         private void LM_print(string a)//upper monitor 上位机
         {
-            if (show_line_num.Checked==true)
+            if (show_line_num.Checked == true)
             {
                 a = line_num.ToString() + "   " + a;
             }
@@ -308,7 +308,7 @@ namespace 上位机
 
         private void button_open_serial_Click(object sender, EventArgs e)
         {
-           
+
             if (open_serial_btn.Text == "打开串口")
             {
                 if (serialPort1.PortName != "未指定")
@@ -325,8 +325,8 @@ namespace 上位机
                             open_serial_btn.Text = "打开串口";
                             MessageBox.Show(err.ToString());
                         }
-                       
-                        UM_print("打开串口"+ serialPort1.PortName.ToString());
+
+                        UM_print("打开串口" + serialPort1.PortName.ToString());
                         UM_print("串口状态：" + serialPort1.IsOpen.ToString());
                     }
                     else
@@ -433,7 +433,7 @@ namespace 上位机
             data_shaft_point = form2.data_shaft_point_0;
             point_size = form2.point_size_0;
             //*****************************右边的串口信息更新**************************************/
-            label_BR.Text = "波特率：" +'\n'+ serialPort1.BaudRate.ToString();
+            label_BR.Text = "波特率：" + '\n' + serialPort1.BaudRate.ToString();
             label_COM.Text = "COM口：" + '\n' + serialPort1.PortName;
             label5.Text = "串口延时：" + '\n' + serial_read_dealy.ToString() + "ms";
             //*****************************COM口选择*****************************************/
@@ -481,7 +481,7 @@ namespace 上位机
 
             }
             //**************************循环发送********************************/
-            if (loop_print.Checked&&counter_100ms%loop_print_interval.Value==0)//点击了循环发送且100ms计数器取余为0
+            if (loop_print.Checked && counter_100ms % loop_print_interval.Value == 0)//点击了循环发送且100ms计数器取余为0
             {
                 checkBox_autoempty.Checked = false;//循环发送的时候不能空
                 serial_println(richTextBox2.Text);
@@ -767,7 +767,7 @@ namespace 上位机
                 g.DrawString((((1 - ((double)point.Y / drawingxox_h)) * (var_max - var_min)) + var_min).ToString(decimal_point[data_shaft_point]), DefaultFont, solid_1, drawingxox_w + 40, point.Y + 3);
 
             }
-        
+
 
         }
         /*********************************************************************************************************/
@@ -775,7 +775,7 @@ namespace 上位机
         public int row_var = 0;
         public int row_var_sd = 0;
         public bool excel_first_sd = true;//首次写入单元格数据
-        
+
         //********************************散点图**************************************/
         public int point_size = 5;
         private void pictureBox2_Paint(object sender, PaintEventArgs e)
@@ -1014,11 +1014,11 @@ namespace 上位机
                             Sheet2.GetRow(row_var).CreateCell(i + 1).SetCellValue(coor[i, coor_var - 1, 1]);
                         }
                     }
-                    
+
                 }
                 if (ecxel_save)//导出文件
                 {
-                    
+
                     FileStream file2003 = new FileStream(@file_name, FileMode.Create);
                     workbook2003.Write(file2003);
                     file2003.Close();
@@ -1027,7 +1027,7 @@ namespace 上位机
                 }
             }
         }
-        
+
         private void button8_Click(object sender, EventArgs e)
         {
             this.Close();//关闭
@@ -1056,17 +1056,17 @@ namespace 上位机
             {
 
                 System.Drawing.Point cur = MousePosition;
-                this.Location = new  System.Drawing.Point(cur.X - offset.X, cur.Y - offset.Y);
+                this.Location = new System.Drawing.Point(cur.X - offset.X, cur.Y - offset.Y);
             }
         }
         Form2 form2 = new Form2();
         private void button10_Click(object sender, EventArgs e)
         {
-            
+
             form2.Show();
         }
 
-       
+
         private void button4_Click(object sender, EventArgs e)
         {
             serial_println(richTextBox2.Text);
@@ -1079,7 +1079,7 @@ namespace 上位机
         public bool excel_record = false;//记录excel保存状态
         public string file_name;
         public bool ecxel_save = false;
-       
+
         private void btn_excel_Click(object sender, EventArgs e)
         {
             if (btn_excel.Text == "开始记录")
@@ -1112,7 +1112,7 @@ namespace 上位机
 
         private void button2_Click_1(object sender, EventArgs e)
         {
-            if (btn5.Visible==true)
+            if (btn5.Visible == true)
             {
                 btn5.Visible = false;
                 btn_excel.Visible = false;
@@ -1126,7 +1126,7 @@ namespace 上位机
                 label_excel_record_val.Visible = true;
                 pictureBox4.Visible = true;
             }
-           
+
         }
 
 
@@ -1161,11 +1161,26 @@ namespace 上位机
                 loop_print.Checked = false;
             }
         }
-        
+
+        bool is_run = false;
         private void button5_Click_1(object sender, EventArgs e)
         {
-            VideoCapture bad_apple = new VideoCapture(@"D:/Bad Apple.mp4");
-            Mat src0 = new Mat();
+            is_run = !is_run;
+            if (is_run)
+            {
+                button5.Text = "暂停";
+                PlayAndTransform();
+            }
+            else
+            {
+                button5.Text = "启动";
+            }
+
+        }
+        VideoCapture bad_apple = new VideoCapture(@"D:/Bad Apple.mp4");
+        Mat src0 = new Mat();
+        private void PlayAndTransform()
+        {
             //row->行->y,col->列->x 
             //前几帧是空的，要弄掉，不然抛异常
             while (true)
@@ -1176,50 +1191,57 @@ namespace 上位机
                     break;
                 }
             }
+            int time_temp = Environment.TickCount;
+            int frame_num = 0;//当前帧数
             Mat src = new Mat(src0, new Rect(0, 100, src0.Cols, src0.Cols / 84 * 48));
             Mat dst = new Mat(48, 84, MatType.CV_8UC1);
             PicCompress pic = new PicCompress(src, dst);
             //两个视频的比例不对，不能直接进行转换，取合适的比例，否则画面会变形
-            for (int i = 0; i < 0; i++)
+            for (int i = 0; i < 200; i++)
             {
                 bad_apple.Read(src0);
+                frame_num++;
             }
+
             while (true)
             {
-                bad_apple.Read(src0);
+
+                for (int i = 0; i < 5; i++)
+                {
+                    bad_apple.Read(src0);
+                    frame_num++;
+                }
                 if (src0.Empty())
                 {
                     break;
                 }
                 Cv2.ImShow("dst", pic.GetMat());
-                Cv2.ImShow("src", src);
-                //string temp = "";
-                byte[] vs = new byte[40];
+                //Cv2.ImShow("src", src);
                 List<byte> A = pic.GetLcdData();
-                for (int i = 0; i < 40; i++)
+                byte[] vs = new byte[42];
+                for (int j = 0; j < 12; j++)
                 {
-                    vs[i] = A[i];
-                }
-                serialPort1.Write(vs, 0, 40);
-               /* foreach (var item in pic.GetLcdData())
-                {
-                    vs += item;
-                    //temp += item.ToString("X");
-                    if (temp.Length>=40)
+                    for (int i = 0; i < 42; i++)
                     {
-                       
-                        UM_print(temp);
-                        serialPort1.Write(temp);
-                        break;
-                        temp = "";
+                        vs[i] = (byte)(0xff - A[i + j * 42]);
                     }
-                }*/
-                break;
-                Cv2.WaitKey(33);
+                    serialPort1.Write(vs, 0, 42);
+                    Thread.Sleep(100);
+
+                }
+                UM_print("当前帧:  " + frame_num.ToString() + "  每秒帧数" + (Math.Pow((Environment.TickCount-time_temp) *Math.Pow(10,-3),-1)).ToString("0.##"));
+                time_temp = Environment.TickCount;
+                if (!is_run)
+                {
+                    return;
+                }
+                // break;
+                Cv2.WaitKey(5);
+
+
             }
-            
+
         }
-       
     }
 }
 

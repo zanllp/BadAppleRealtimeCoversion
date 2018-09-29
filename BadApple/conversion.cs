@@ -80,10 +80,10 @@ namespace BadApple
                 for (int j = 0; j < Dst.Cols; j++)
                 {
                     byte temp = 0;
-                    for (int K = 0; K < 8; K++)//8BIT
+                    for (int K = 7; K >=0; K--)//8BIT 倒取
                     {
-                        byte value = Dst.Get<byte>(j + K, i);
-                        if (value == 255)
+                        byte value = Dst.Get<byte>(i + K, j);
+                        if (value>=thresold_var)
                         {
                             temp |= (byte)(1 << K);
                         }
