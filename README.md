@@ -1,2 +1,2 @@
 # BadAppleRealtimeCoversion
-坏苹果视频实时转换并输出到arduino的5110上
+坏苹果视频实时转换并输出到arduino的5110上。支持任意视频的转换，控制好阈值就行。其它单片机的话直接拿u8g等lcd库改下应该也可以用。
